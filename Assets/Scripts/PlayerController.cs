@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using RestSharp;
+using System.Threading.Tasks;
 
 public class PlayerController : MonoBehaviour
 {
@@ -34,13 +36,13 @@ public class PlayerController : MonoBehaviour
         movementY = movementVector.y;
     }
 
-    void SetCountText()
+    async void SetCountText()
     {
         countText.text = $"Count: {count}";
 
         if (count >= 21)
         {
-            var name = makeRequest();
+            var name = await makeRequestAsynchronous();
             winTextObject.text = $"{name} win!";
 
             winTextObject.gameObject.SetActive(true);
@@ -90,13 +92,14 @@ public class PlayerController : MonoBehaviour
         }  
     } 
 
-    private string makeRequest()
+    // Create an asynchronous request
+    private async Task<string> makeRequestAsynchronous()
     {
-        var restClient = new RestSharp.RestClient("https://gorest.co.in/public/v1");
-        var request = new RestSharp.RestRequest("/users/32", RestSharp.Method.GET);
+        var restClient = new RestClient("https://gorest.co.in/public/v1");
+        var request = new RestRequest("/users/32", Method.GET);
 
-        var result = restClient.Execute<Root>(request).Data;
-        return result.data.name;
+        var response = await restClient.GetAsync<Root>(request);
+        return response.data.name;
     }
 }
 
