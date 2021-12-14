@@ -8,3 +8,11 @@ Logs/
 obj/
 
 UserSettings/
+
+Temp/
+
+*.csproj
+
+*.sln
+
+.vs/
